@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+# Direnv
+.direnv/
+
+# Private files
+*.aware.toml
+*.aware.json
