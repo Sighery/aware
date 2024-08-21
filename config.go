@@ -12,6 +12,12 @@ type (
 		NotificationService string `toml:"notification_service"`
 		TradesFile          string `toml:"trades_file"`
 		Binance             BinanceConfig
+		Telegram            TelegramConfig
+	}
+
+	TelegramConfig struct {
+		ApiToken string `toml:"api_token"`
+		ChatId   int    `toml:"chat_id"`
 	}
 
 	BinanceConfig struct {

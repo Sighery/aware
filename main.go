@@ -10,9 +10,9 @@ func help() {
 	fmt.Println("Provide a configuration TOML file as the argument in CLI")
 }
 
-func dump(data interface{}) {
+func dump(data interface{}) string {
 	b, _ := json.MarshalIndent(data, "", "  ")
-	fmt.Print(string(b))
+	return string(b)
 }
 
 func main() {
@@ -34,5 +34,7 @@ func main() {
 	prices := GetData(config.Binance.Apikey, config.Binance.Secretkey, trades)
 
 	fmt.Println("Latest prices:")
-	dump(prices)
+	fmt.Print(dump(prices))
+
+	SendNotification(config.Telegram.ApiToken, config.Telegram.ChatId, prices)
 }
