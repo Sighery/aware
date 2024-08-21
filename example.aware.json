@@ -1,0 +1,17 @@
+[
+	{
+		"symbol": "ETHEUR",
+		"first_amount": 0.451,
+		"second_amount": 1000.28192
+	},
+	{
+		"symbol": "ETHEUR",
+		"first_amount": 0.1372,
+		"second_amount": 499.672755
+	},
+	{
+		"symbol": "SOLEUR",
+		"first_amount": 2.130,
+		"second_amount": 286.9323
+	}
+]

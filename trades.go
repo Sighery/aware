@@ -18,6 +18,7 @@ type (
 func ParseTrades(file string) []Trade {
 	jsonFile, err := os.Open(file)
 	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to open trades file")
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

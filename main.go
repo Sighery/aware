@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -9,25 +10,29 @@ func help() {
 	fmt.Println("Provide a configuration TOML file as the argument in CLI")
 }
 
+func dump(data interface{}) {
+	b, _ := json.MarshalIndent(data, "", "  ")
+	fmt.Print(string(b))
+}
+
 func main() {
 	if len(os.Args) != 2 {
 		help()
-		return
+		os.Exit(0)
 	}
 
 	arg := os.Args[1]
 
 	if arg == "help" || arg == "-help" || arg == "--help" {
 		help()
-		return
+		os.Exit(0)
 	}
 
 	config := ParseConfig(arg)
-	trades := ParseTrades(config.Trades_file)
+	trades := ParseTrades(config.TradesFile)
 
-	fmt.Println(trades)
+	prices := GetData(config.Binance.Apikey, config.Binance.Secretkey, trades)
 
-	prices := GetData(config.Binance.Api_key, config.Binance.Secret_key, trades)
-
-	fmt.Printf("%+v\n", prices)
+	fmt.Println("Latest prices:")
+	dump(prices)
 }

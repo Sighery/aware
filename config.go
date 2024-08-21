@@ -8,22 +8,23 @@ import (
 )
 
 type (
-	configuration struct {
-		Notification_service string
-		Trades_file          string
-		Binance              binance_config
+	Configuration struct {
+		NotificationService string `toml:"notification_service"`
+		TradesFile          string `toml:"trades_file"`
+		Binance             BinanceConfig
 	}
 
-	binance_config struct {
-		Api_key    string
-		Secret_key string
+	BinanceConfig struct {
+		Apikey    string `toml:"api_key"`
+		Secretkey string `toml:"secret_key"`
 	}
 )
 
-func ParseConfig(file string) configuration {
-	var data configuration
+func ParseConfig(file string) Configuration {
+	var data Configuration
 	_, err := toml.DecodeFile(file, &data)
 	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to open TOML file")
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

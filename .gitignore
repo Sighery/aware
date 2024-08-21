@@ -30,3 +30,5 @@ go.work.sum
 # Private files
 *.aware.toml
 *.aware.json
+!example.aware.toml
+!example.aware.json

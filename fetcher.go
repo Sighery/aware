@@ -25,28 +25,6 @@ type (
 func GetData(apikey string, secretkey string, trades []Trade) []Price {
 	client := binance.NewClient(apikey, secretkey)
 
-	// This will fetch coins you use or have some amount in
-	// acc, err := client.NewGetAccountService().Do(context.Background())
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// // fmt.Println(acc)
-	// // fmt.Print("\n\n")
-	// // fmt.Println(acc.Balances)
-
-	// assets := make([]string, 0)
-	// for _, balance := range acc.Balances {
-	// 	amount, err := strconv.ParseFloat(balance.Free, 64)
-	// 	if err != nil {
-	// 		continue
-	// 	}
-	// 	if amount != 0 {
-	// 		assets = append(assets, balance.Asset)
-	// 	}
-	// }
-	// fmt.Println(assets)
-
 	s := map[string]bool{}
 	for _, trade := range trades {
 		s[trade.Symbol] = true
@@ -92,4 +70,28 @@ func GetData(apikey string, secretkey string, trades []Trade) []Price {
 	}
 
 	return calculatedTrades
+}
+
+func GetUsedCoins(apikey string, secretkey string) []string {
+	client := binance.NewClient(apikey, secretkey)
+
+	acc, err := client.NewGetAccountService().Do(context.Background())
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	assets := make([]string, 0)
+	for _, balance := range acc.Balances {
+		amount, err := strconv.ParseFloat(balance.Free, 64)
+		if err != nil {
+			continue
+		}
+		if amount != 0 {
+			assets = append(assets, balance.Asset)
+		}
+	}
+	fmt.Println(assets)
+
+	return assets
 }
