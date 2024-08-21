@@ -29,11 +29,18 @@ func main() {
 	}
 
 	config := ParseConfig(arg)
-	trades := ParseTrades(config.TradesFile)
+
+	var trades []Trade
+	if config.TradesFile != "" {
+		trades = ParseTrades(config.TradesFile)
+	} else {
+		binanceTrades := GetOpenTrades(config.Binance.Apikey, config.Binance.Secretkey, config.TradingPair)
+		trades = ConvertBinanceTrades(binanceTrades)
+	}
 
 	prices := GetData(config.Binance.Apikey, config.Binance.Secretkey, trades)
 
-	fmt.Println("Latest prices:")
+	fmt.Println("Latest PnL:")
 	fmt.Print(dump(prices))
 
 	SendNotification(config.Telegram.ApiToken, config.Telegram.ChatId, prices)

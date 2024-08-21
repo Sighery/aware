@@ -1,9 +1,11 @@
 notification_service = "telegram"
 trades_file = "example.aware.json"
+refresh_interval = 30
+trading_pair = "EUR"
 
 [telegram]
-api_token = ""
-chat_id = 123
+api_token = "example"
+chat_id = -123
 
 [binance]
 api_key = "example"

@@ -11,6 +11,8 @@ type (
 	Configuration struct {
 		NotificationService string `toml:"notification_service"`
 		TradesFile          string `toml:"trades_file"`
+		RefreshInterval     int    `toml:"refresh_interval"`
+		TradingPair         string `toml:"trading_pair"`
 		Binance             BinanceConfig
 		Telegram            TelegramConfig
 	}
