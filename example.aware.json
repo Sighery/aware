@@ -1,17 +1,20 @@
 [
 	{
+		"id": "1",
 		"symbol": "ETHEUR",
 		"first_amount": 0.451,
 		"remaining": 0.451,
 		"second_amount": 1000.28192
 	},
 	{
+		"id": "2",
 		"symbol": "ETHEUR",
 		"first_amount": 0.1372,
 		"remaining": 0.1372,
 		"second_amount": 499.672755
 	},
 	{
+		"id": "3",
 		"symbol": "SOLEUR",
 		"first_amount": 2.130,
 		"remaining": 2.130,

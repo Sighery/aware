@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
+	"time"
 )
 
 func help() {
@@ -13,6 +15,45 @@ func help() {
 func dump(data interface{}) string {
 	b, _ := json.MarshalIndent(data, "", "  ")
 	return string(b)
+}
+
+func fetchTrades(config Configuration) []Trade {
+	var trades []Trade
+	if config.TradesFile != "" {
+		trades = ParseTrades(config.TradesFile)
+	} else {
+		binanceTrades := GetOpenTrades(config.Binance.Apikey, config.Binance.Secretkey, config.TradingPair)
+		trades = ConvertBinanceTrades(binanceTrades)
+	}
+
+	return trades
+}
+
+func formatPrices(config Configuration, prices []Price, previous []Price) string {
+	var filtered []Price
+	if previous == nil {
+		for _, p := range prices {
+			if MeetsRules(config.NotificationRules, p) {
+				filtered = append(filtered, p)
+			}
+		}
+	} else {
+		result := FilterTrades(config.NotificationRules, prices, previous)
+		if len(result) != 0 {
+			filtered = result
+		}
+	}
+
+	dumped := []string{}
+	for _, trade := range filtered {
+		dumped = append(dumped, dump(trade))
+	}
+
+	if len(dumped) == 0 {
+		return ""
+	}
+
+	return strings.Join(dumped, "\n")
 }
 
 func main() {
@@ -30,18 +71,34 @@ func main() {
 
 	config := ParseConfig(arg)
 
-	var trades []Trade
-	if config.TradesFile != "" {
-		trades = ParseTrades(config.TradesFile)
-	} else {
-		binanceTrades := GetOpenTrades(config.Binance.Apikey, config.Binance.Secretkey, config.TradingPair)
-		trades = ConvertBinanceTrades(binanceTrades)
-	}
+	pricesTicker := time.NewTicker(time.Duration(config.RefreshInterval) * time.Second)
+	tradesTicker := time.NewTicker(time.Duration(config.TradesRefresh) * time.Second)
 
-	prices := GetData(config.Binance.Apikey, config.Binance.Secretkey, trades)
+	trades := fetchTrades(config)
+	var previous []Price
 
-	fmt.Println("Latest PnL:")
-	fmt.Print(dump(prices))
+	go func() {
+		for ; ; <-tradesTicker.C {
+			fmt.Println("Updating trades...")
+			trades = fetchTrades(config)
+		}
+	}()
 
-	SendNotification(config.Telegram.ApiToken, config.Telegram.ChatId, prices)
+	go func() {
+		for ; ; <-pricesTicker.C {
+			prices := GetData(config.Binance.Apikey, config.Binance.Secretkey, trades)
+
+			fmt.Println("Latest PnL:")
+			fmt.Println(dump(prices))
+
+			message := formatPrices(config, prices, previous)
+
+			if message != "" {
+				SendMessage(config.Telegram.ApiToken, config.Telegram.ChatId, "", message)
+			}
+			previous = prices
+		}
+	}()
+
+	select {}
 }

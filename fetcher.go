@@ -12,6 +12,7 @@ import (
 
 type (
 	Price struct {
+		Id               string
 		Symbol           string
 		FirstAmount      float64
 		SecondAmount     float64
@@ -19,6 +20,7 @@ type (
 		CurrentExchange  float64
 		CurrentAmount    float64
 		Difference       float64
+		DifferencePerc   float64
 	}
 )
 
@@ -54,9 +56,11 @@ func GetData(apikey string, secretkey string, trades []Trade) []Price {
 		currentExchange := pricesMap[trade.Symbol]
 		previousExchange := trade.SecondAmount / trade.FirstAmount
 		currentAmount := trade.FirstAmount * currentExchange
-		difference := (currentExchange - previousExchange) / math.Abs(previousExchange) * 100
+		difference := currentAmount - trade.SecondAmount
+		differencePerc := (currentExchange - previousExchange) / math.Abs(previousExchange) * 100
 
 		calculatedTrade := Price{
+			Id:               trade.Id,
 			Symbol:           trade.Symbol,
 			FirstAmount:      trade.FirstAmount,
 			SecondAmount:     trade.SecondAmount,
@@ -64,6 +68,7 @@ func GetData(apikey string, secretkey string, trades []Trade) []Price {
 			CurrentExchange:  currentExchange,
 			CurrentAmount:    currentAmount,
 			Difference:       difference,
+			DifferencePerc:   differencePerc,
 		}
 
 		calculatedTrades = append(calculatedTrades, calculatedTrade)

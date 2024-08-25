@@ -12,7 +12,9 @@ type (
 		NotificationService string `toml:"notification_service"`
 		TradesFile          string `toml:"trades_file"`
 		RefreshInterval     int    `toml:"refresh_interval"`
+		TradesRefresh       int    `toml:"trades_refresh"`
 		TradingPair         string `toml:"trading_pair"`
+		NotificationRules   []int  `toml:"notification_rules"`
 		Binance             BinanceConfig
 		Telegram            TelegramConfig
 	}

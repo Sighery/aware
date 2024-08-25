@@ -1,7 +1,9 @@
 notification_service = "telegram"
 trades_file = "example.aware.json"
 refresh_interval = 30
+trades_refresh = 300
 trading_pair = "EUR"
+notification_rules = [5, -5]
 
 [telegram]
 api_token = "example"

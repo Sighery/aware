@@ -13,6 +13,7 @@ import (
 
 type (
 	Trade struct {
+		Id           string
 		Symbol       string
 		FirstAmount  float64 `json:"first_amount"`
 		SecondAmount float64 `json:"second_amount"`
@@ -81,7 +82,7 @@ func ConvertBinanceTrades(orders []*binance.Order) []Trade {
 				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
-			trades = append(trades, Trade{Symbol: trade.order.Symbol, FirstAmount: bought, SecondAmount: spent, Remaining: trade.bought})
+			trades = append(trades, Trade{Id: strconv.FormatInt(trade.order.OrderID, 10), Symbol: trade.order.Symbol, FirstAmount: bought, SecondAmount: spent, Remaining: trade.bought})
 		}
 	}
 
